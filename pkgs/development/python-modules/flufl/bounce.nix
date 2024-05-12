@@ -27,6 +27,12 @@ buildPythonPackage rec {
     zope-interface
   ];
 
+  postPatch = ''
+    # python 3.12 compatibility
+    substituteInPlace flufl/bounce/tests/*.py \
+      --replace "failIf" "assertFalse"
+  '';
+
   nativeCheckInputs = [
     pytestCheckHook
   ];
