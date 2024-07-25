@@ -3,7 +3,6 @@
   fetchFromGitHub,
   fetchYarnDeps,
   lib,
-  mkYarnPackage,
   rustPlatform,
   stdenv,
   typescript,
