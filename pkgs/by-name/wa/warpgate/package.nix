@@ -1,16 +1,17 @@
-{ cargo
-, fetchFromGitHub
-, fetchYarnDeps
-, lib
-, mkYarnPackage
-, rustPlatform
-, stdenv
-, typescript
-, openapi-generator-cli
-, fetchpatch
-, yarnConfigHook
-, yarnBuildHook
-, nodejs
+{
+  cargo,
+  fetchFromGitHub,
+  fetchYarnDeps,
+  lib,
+  mkYarnPackage,
+  rustPlatform,
+  stdenv,
+  typescript,
+  openapi-generator-cli,
+  fetchpatch,
+  yarnConfigHook,
+  yarnBuildHook,
+  nodejs,
 }:
 let
   version = "0.10.0";
@@ -26,7 +27,7 @@ let
       hash = "sha256-fsVlEPEWSqX493lTwRzcC7Dxc0LZIAX+8WWlUQ1rdAw=";
     })
   ];
-  patchFlags = ["-p2"];
+  patchFlags = [ "-p2" ];
   schema = stdenv.mkDerivation {
     inherit src;
     pname = "warpgate-schema";
@@ -86,7 +87,12 @@ let
     };
 
     postUnpack = "cp -r ${schema}/src ${sourceRoot}";
-    nativeBuildInputs = [ schema yarnConfigHook yarnBuildHook nodejs ];
+    nativeBuildInputs = [
+      schema
+      yarnConfigHook
+      yarnBuildHook
+      nodejs
+    ];
     # TODO why do I have to mkdir $out ?
     installPhase = ''
       runHook preInstall
@@ -116,6 +122,6 @@ rustPlatform.buildRustPackage rec {
     changelog = "https://github.com/warp-tech/warpgate/releases/tag/v${version}";
     license = lib.licenses.asl20;
     # TODO lib.maintainers.jemand771 after https://github.com/NixOS/nixpkgs/pull/328036
-    maintainers = [];
+    maintainers = [ ];
   };
 }
