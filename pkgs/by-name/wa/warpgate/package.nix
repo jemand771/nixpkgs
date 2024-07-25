@@ -93,10 +93,11 @@ let
       yarnBuildHook
       nodejs
     ];
-    # TODO why do I have to mkdir $out ?
+    # TODO can yarnInstallHook help here? (https://github.com/NixOS/nixpkgs/pull/328544)
     installPhase = ''
       runHook preInstall
-      mkdir -p $out && cp -r dist $out
+      mkdir -p $out
+      cp -r dist $out
       runHook postInstall
     '';
     doDist = false;
