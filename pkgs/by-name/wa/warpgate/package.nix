@@ -7,18 +7,26 @@
 , stdenv
 , typescript
 , openapi-generator-cli
+, fetchpatch
+, yarnConfigHook
+, yarnBuildHook
+, nodejs
 }:
 let
   version = "0.10.0";
   src = fetchFromGitHub {
-    # owner = "warp-tech";
-    owner = "jemand771";
+    owner = "warp-tech";
     repo = "warpgate";
-    # rev = "v${version}";
-    rev = "update-lockfile";
-    # hash = "sha256-VU5nxY0iqP1bFhKtQUCj1OXSmEuAIuWlHTmaUuIZiu0=";
-    hash = "sha256-14FzghqgN432O2R6rsnzsBQYXgdrOh4pWfwd5qppbLI=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-VU5nxY0iqP1bFhKtQUCj1OXSmEuAIuWlHTmaUuIZiu0=";
   };
+  patches = [
+    (fetchpatch {
+      url = "https://github.com/warp-tech/warpgate/commit/e9b4a3b94fd6b26ffa4f457a8cb7d68581984078.patch";
+      hash = "sha256-fsVlEPEWSqX493lTwRzcC7Dxc0LZIAX+8WWlUQ1rdAw=";
+    })
+  ];
+  patchFlags = ["-p2"];
   schema = stdenv.mkDerivation {
     inherit src;
     pname = "warpgate-schema";
@@ -27,7 +35,7 @@ let
     cargoDeps = rustPlatform.fetchCargoTarball {
       inherit src;
       cargoRoot = "${src}/warpgate-web";
-      hash = "sha256-enPiW8An2nXB+fbLz5U4fhWuJaDEWblXyKeVnUaoV8o=";
+      hash = "sha256-hJpFbWvwTpw0k3BWFBf4/XWHbs/LS7OCgKewgpPjNI4=";
     };
 
     nativeBuildInputs = [
@@ -64,43 +72,40 @@ let
     '';
   };
 
-  frontend = mkYarnPackage {
-    src = "${src}/warpgate-web";
+  frontend = stdenv.mkDerivation rec {
+    inherit src version;
+    inherit patches patchFlags;
     pname = "warpgate-web";
-    inherit version;
 
-    yarnLock = "${src}/warpgate-web/yarn.lock";
+    sourceRoot = "${src.name}/warpgate-web";
     yarnOfflineCache = fetchYarnDeps {
-      yarnLock = "${src}/warpgate-web/yarn.lock";
+      inherit src version;
+      inherit patches patchFlags;
+      sourceRoot = "${src.name}/warpgate-web";
       hash = "sha256-uuGf4Zg6T3HLlW74/ud/FfmUAOo6vWQVZLAq3Tq3Wv8=";
     };
 
-    # vite wants writable node_modules
-    configurePhase = ''
-      cp -r $node_modules node_modules
-      chmod +w node_modules
-      cp -r ${schema}/src .
-    '';
-    nativeBuildInputs = [ schema ];
-    buildPhase = "yarn --offline build";
+    postUnpack = "cp -r ${schema}/src ${sourceRoot}";
+    nativeBuildInputs = [ schema yarnConfigHook yarnBuildHook nodejs ];
     # TODO why do I have to mkdir $out ?
-    installPhase = "mkdir -p $out && cp -r dist $out";
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out && cp -r dist $out
+      runHook postInstall
+    '';
     doDist = false;
   };
 in
 rustPlatform.buildRustPackage rec {
   pname = "warpgate";
-  inherit version;
-  inherit src;
+  inherit src version;
 
-  preBuild = ''
-    cp -r ${frontend}/dist warpgate-web
-  '';
+  postUnpack = "cp -r ${frontend}/dist ${src.name}/warpgate-web";
   nativeBuildInputs = [ frontend ];
 
   RUSTC_BOOTSTRAP = 1;
   RUSTFLAGS = [ "--cfg tokio_unstable" ];
-  cargoHash = "sha256-jwCIWmykzRyCYuaWRDm99kGLdk+RSSdsI87/97lpNRI=";
+  cargoHash = "sha256-eaQir7Xu3quybGLUOnY49Bhm+7/n+97Uxni51dvm+1M=";
 
   cargoTestFlags = [ "--workspace" ];
 
