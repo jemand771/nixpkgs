@@ -20,6 +20,7 @@ let
     rev = "refs/tags/v${version}";
     hash = "sha256-VU5nxY0iqP1bFhKtQUCj1OXSmEuAIuWlHTmaUuIZiu0=";
   };
+  # TODO remove after next release - https://github.com/warp-tech/warpgate/pull/1019
   patches = [
     (fetchpatch {
       url = "https://github.com/warp-tech/warpgate/commit/e9b4a3b94fd6b26ffa4f457a8cb7d68581984078.patch";
