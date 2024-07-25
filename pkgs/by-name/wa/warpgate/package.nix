@@ -20,6 +20,7 @@ let
     rev = "refs/tags/v${version}";
     hash = "sha256-VU5nxY0iqP1bFhKtQUCj1OXSmEuAIuWlHTmaUuIZiu0=";
   };
+  sourceRoot = "${src.name}/warpgate-web";
   # TODO remove after next release - https://github.com/warp-tech/warpgate/pull/1019
   patches = [
     (fetchpatch {
@@ -35,7 +36,7 @@ let
 
     cargoDeps = rustPlatform.fetchCargoTarball {
       inherit src;
-      cargoRoot = "${src}/warpgate-web";
+      cargoRoot = "${sourceRoot}";
       hash = "sha256-hJpFbWvwTpw0k3BWFBf4/XWHbs/LS7OCgKewgpPjNI4=";
     };
 
@@ -74,15 +75,13 @@ let
   };
 
   frontend = stdenv.mkDerivation rec {
-    inherit src version;
+    inherit src version sourceRoot;
     inherit patches patchFlags;
     pname = "warpgate-web";
 
-    sourceRoot = "${src.name}/warpgate-web";
     yarnOfflineCache = fetchYarnDeps {
-      inherit src version;
+      inherit src version sourceRoot;
       inherit patches patchFlags;
-      sourceRoot = "${src.name}/warpgate-web";
       hash = "sha256-uuGf4Zg6T3HLlW74/ud/FfmUAOo6vWQVZLAq3Tq3Wv8=";
     };
 
@@ -100,14 +99,13 @@ let
       cp -r dist $out
       runHook postInstall
     '';
-    doDist = false;
   };
 in
 rustPlatform.buildRustPackage rec {
   pname = "warpgate";
   inherit src version;
 
-  postUnpack = "cp -r ${frontend}/dist ${src.name}/warpgate-web";
+  postUnpack = "cp -r ${frontend}/dist ${sourceRoot}";
   nativeBuildInputs = [ frontend ];
 
   RUSTC_BOOTSTRAP = 1;
