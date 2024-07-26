@@ -7,28 +7,19 @@
   stdenv,
   typescript,
   openapi-generator-cli,
-  fetchpatch,
   yarnConfigHook,
   yarnBuildHook,
   nodejs,
 }:
 let
-  version = "0.10.0";
+  version = "0.10.1";
   src = fetchFromGitHub {
     owner = "warp-tech";
     repo = "warpgate";
     rev = "refs/tags/v${version}";
-    hash = "sha256-VU5nxY0iqP1bFhKtQUCj1OXSmEuAIuWlHTmaUuIZiu0=";
+    hash = "sha256-FUEfrofRLxyUH/cq8HaivfNe1wb2NmaQixXORnNIlL8=";
   };
   sourceRoot = "${src.name}/warpgate-web";
-  # TODO remove after next release - https://github.com/warp-tech/warpgate/pull/1019
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/warp-tech/warpgate/commit/e9b4a3b94fd6b26ffa4f457a8cb7d68581984078.patch";
-      hash = "sha256-fsVlEPEWSqX493lTwRzcC7Dxc0LZIAX+8WWlUQ1rdAw=";
-    })
-  ];
-  patchFlags = [ "-p2" ];
   schema = stdenv.mkDerivation {
     inherit src;
     pname = "warpgate-schema";
@@ -37,7 +28,7 @@ let
     cargoDeps = rustPlatform.fetchCargoTarball {
       inherit src;
       cargoRoot = "${sourceRoot}";
-      hash = "sha256-hJpFbWvwTpw0k3BWFBf4/XWHbs/LS7OCgKewgpPjNI4=";
+      hash = "sha256-enPiW8An2nXB+fbLz5U4fhWuJaDEWblXyKeVnUaoV8o=";
     };
 
     nativeBuildInputs = [
@@ -76,12 +67,10 @@ let
 
   frontend = stdenv.mkDerivation rec {
     inherit src version sourceRoot;
-    inherit patches patchFlags;
     pname = "warpgate-web";
 
     yarnOfflineCache = fetchYarnDeps {
       inherit src version sourceRoot;
-      inherit patches patchFlags;
       hash = "sha256-uuGf4Zg6T3HLlW74/ud/FfmUAOo6vWQVZLAq3Tq3Wv8=";
     };
 
@@ -110,7 +99,7 @@ rustPlatform.buildRustPackage rec {
 
   RUSTC_BOOTSTRAP = 1;
   RUSTFLAGS = [ "--cfg tokio_unstable" ];
-  cargoHash = "sha256-eaQir7Xu3quybGLUOnY49Bhm+7/n+97Uxni51dvm+1M=";
+  cargoHash = "sha256-YU27ZaO5C+MoKHW2VnbAE5Bef0tZbm0VV1HApiuaDhw=";
 
   cargoTestFlags = [ "--workspace" ];
 
