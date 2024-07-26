@@ -42,6 +42,7 @@ let
 
     # see openapi:* scripts in https://github.com/warp-tech/warpgate/blob/main/warpgate-web/package.json
     buildPhase = ''
+      runHook preBuild
       cd warpgate-web
       mkdir dist
 
@@ -62,6 +63,7 @@ let
 
       generate_schema gateway warpgate-protocol-http
       generate_schema admin warpgate-admin
+      runHook postBuild
     '';
   };
 
