@@ -6,27 +6,24 @@
   pytestCheckHook,
   pythonOlder,
   pytz,
+  setuptools,
 }:
 
 buildPythonPackage rec {
   pname = "us";
   version = "3.2.0";
-  format = "setuptools";
+  pyproject = true;
 
-  disabled = pythonOlder "3.6";
+  # upstream says >= 3.9 but 3.9 fails with errors beyond my comprehension
+  disabled = pythonOlder "3.10";
 
   src = fetchPypi {
     inherit pname version;
     hash = "sha256-yyI+hTk9zFFx6tDdISutxH+WZ7I3AP6j5+pfMQ1UUzg=";
   };
 
-  postPatch = ''
-    # Upstream spins jellyfish
-    substituteInPlace setup.py \
-      --replace "jellyfish==" "jellyfish>="
-  '';
-
-  propagatedBuildInputs = [ jellyfish ];
+  nativeBuildInputs = [ setuptools ];
+  dependencies = [ jellyfish ];
 
   nativeCheckInputs = [
     pytestCheckHook
