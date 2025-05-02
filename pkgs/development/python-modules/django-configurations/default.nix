@@ -41,7 +41,7 @@ buildPythonPackage rec {
     export PYTHONPATH=.:$PYTHONPATH
     export DJANGO_SETTINGS_MODULE="tests.settings.main"
     export DJANGO_CONFIGURATION="Test"
-    ${django}/bin/django-admin test
+    ${lib.getExe' django "django-admin"} test
   '';
 
   # django.core.exceptions.ImproperlyConfigured: django-configurations settings importer wasn't correctly installed
