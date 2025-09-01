@@ -14,6 +14,7 @@
   jq,
   cacert,
   curl,
+  callPackage,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
@@ -42,7 +43,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   passthru = {
     tests = { inherit (nixosTests) jenkins jenkins-cli; };
-
+    inherit (callPackage ./plugins.nix { }) plugins withPlugins;
     updateScript = writeScript "update.sh" ''
       #!${stdenv.shell}
       set -o errexit
