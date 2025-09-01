@@ -2,9 +2,9 @@
 rec {
   pluginMap = builtins.concatMap (plugin: [ plugin ] ++ pluginMap plugin.dependencies);
   plugins = builtins.mapAttrs (
-    name: info:
+    pname: info:
     fetchurl {
-      inherit name;
+      inherit pname;
       inherit (info) url version sha256;
       passthru = {
         dependencies = builtins.map (p: builtins.getAttr p plugins) info.dependencies;
@@ -15,7 +15,7 @@ rec {
     plugins:
     builtins.listToAttrs (
       builtins.map (p: {
-        inherit (p) name;
+        name = p.pname;
         value = p;
       }) (pluginMap plugins)
     );
