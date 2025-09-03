@@ -1,4 +1,14 @@
-{ lib, linkFarm, fetchurl, curl, jq, openjdk21, jenkins, runCommand, ... }:
+{
+  lib,
+  linkFarm,
+  fetchurl,
+  curl,
+  jq,
+  openjdk21,
+  jenkins,
+  runCommand,
+  ...
+}:
 rec {
   pluginMap = builtins.concatMap (plugin: [ plugin ] ++ pluginMap plugin.dependencies);
   plugins = builtins.mapAttrs (
@@ -19,13 +29,22 @@ rec {
         value = p;
       }) (pluginMap plugins)
     );
-  pluginDir = plugins: linkFarm "plugins" (builtins.map (p: { name = "${p.pname}.jpi"; path = builtins.toString p; }) (pluginMap plugins));
-  jcascSchema = pp: runCommand "schema.yaml" {} ''
-    mkdir -p .jenkins/plugins
-    cp -r ${pluginDir pp}/* .jenkins/plugins/
-    ls -l .jenkins/plugins/
-    ${lib.getExe openjdk21} -Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -jar ${jenkins}/webapps/jenkins.war &
-    while ! ${lib.getExe curl} -s http://localhost:8080/configuration-as-code/schema | ${lib.getExe jq} . > $out; do sleep 1; done
-    kill $!
-  '';
+  pluginDir =
+    plugins:
+    linkFarm "plugins" (
+      builtins.map (p: {
+        name = "${p.pname}.jpi";
+        path = builtins.toString p;
+      }) (pluginMap plugins)
+    );
+  jcascSchema =
+    pp:
+    runCommand "schema.yaml" { } ''
+      mkdir -p .jenkins/plugins
+      cp -r ${pluginDir pp}/* .jenkins/plugins/
+      ls -l .jenkins/plugins/
+      ${lib.getExe openjdk21} -Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -jar ${jenkins}/webapps/jenkins.war &
+      while ! ${lib.getExe curl} -s http://localhost:8080/configuration-as-code/schema | ${lib.getExe jq} . > $out; do sleep 1; done
+      kill $!
+    '';
 }

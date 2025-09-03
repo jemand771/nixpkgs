@@ -43,7 +43,12 @@ stdenv.mkDerivation (finalAttrs: {
 
   passthru = {
     tests = { inherit (nixosTests) jenkins jenkins-cli; };
-    inherit (callPackage ./plugins.nix { }) plugins withPlugins pluginDir jcascSchema;
+    inherit (callPackage ./plugins.nix { })
+      plugins
+      withPlugins
+      pluginDir
+      jcascSchema
+      ;
     updateScript = writeScript "update.sh" ''
       #!${stdenv.shell}
       set -o errexit
