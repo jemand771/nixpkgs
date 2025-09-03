@@ -10,7 +10,14 @@
   ...
 }:
 rec {
-  pluginMap = builtins.concatMap (plugin: [ plugin ] ++ pluginMap plugin.dependencies);
+  reapply =
+    f: val:
+    let
+      next = f val;
+    in
+    if next == val then val else reapply f next;
+  resolveDeps = plugins: lib.unique (plugins ++ builtins.concatMap (p: p.dependencies) plugins);
+  pluginMap = reapply resolveDeps;
   plugins = builtins.mapAttrs (
     pname: info:
     fetchurl {
