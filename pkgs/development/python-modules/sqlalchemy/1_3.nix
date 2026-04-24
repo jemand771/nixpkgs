@@ -39,6 +39,16 @@ buildPythonPackage (finalAttrs: {
 
   postPatch = ''
     sed -i '/tag_build = dev/d' setup.cfg
+    # Python 3.12+ removed the implicit event loop creation in asyncio.get_event_loop()
+    substituteInPlace lib/sqlalchemy/util/_concurrency_py3k.py \
+      --replace-fail \
+        'return asyncio.get_event_loop_policy().get_event_loop()' \
+        'try:
+                    return asyncio.get_event_loop_policy().get_event_loop()
+                except RuntimeError:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    return loop'
   '';
 
   build-system = [ setuptools ];
@@ -71,6 +81,9 @@ buildPythonPackage (finalAttrs: {
     "test/ext/mypy"
     # slow and high memory usage, not interesting
     "test/aaa_profiling"
+    # asyncio.get_event_loop_policy() deprecated and removed in Python 3.14
+    "test/ext/asyncio"
+    "test/base/test_concurrency_py3k.py"
   ];
 
   pythonImportsCheck = [ "sqlalchemy" ];

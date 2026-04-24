@@ -47,6 +47,8 @@ buildPythonPackage rec {
 
   postPatch = ''
     sed -i 's#''${Python3_SITEARCH}#${placeholder "out"}/${python.sitePackages}#' cmake/SIPMacros.cmake
+    # uint32_t requires <cstdint> in newer GCC/libstdc++
+    sed -i '1s/^/#include <cstdint>\n/' src/Types.h src/PlatformSocket_p.h
   '';
 
   meta = {

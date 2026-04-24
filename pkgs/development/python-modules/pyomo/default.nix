@@ -50,6 +50,8 @@ buildPythonPackage rec {
   disabledTests = [
     # Test requires lsb_release
     "test_get_os_version"
+    # Python 3.14 changed timeout/threading behavior
+    "test_timeout_skip_fails"
   ];
 
   meta = {

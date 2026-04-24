@@ -38,6 +38,11 @@ buildPythonPackage (finalAttrs: {
 
   nativeCheckInputs = [ pytestCheckHook ];
 
+  disabledTests = [
+    # RuntimeError: There is no current event loop in thread 'MainThread' (Python 3.10+)
+    "test_privmsg_sends_msg"
+  ];
+
   __darwinAllowLocalNetworking = true;
 
   pythonImportsCheck = [ "irc" ];

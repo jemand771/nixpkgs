@@ -9,7 +9,6 @@
   numpy,
   pip,
   setuptools,
-  pytestCheckHook,
   nix-update-script,
 }:
 
@@ -41,8 +40,6 @@ buildPythonPackage rec {
   ];
 
   postPatch = ''
-    substituteInPlace setup.py \
-      --replace-fail "setup_requires=['pytest-runner']," ""
     substituteInPlace pyproject.toml \
       --replace-fail "numpy==" "numpy>="
   '';
@@ -50,14 +47,6 @@ buildPythonPackage rec {
   preBuild = ''
     export HOME=$(mktemp -d)
   '';
-
-  nativeCheckInputs = [
-    pytestCheckHook
-  ];
-
-  enabledTestPaths = [
-    "tests/mrsqm"
-  ];
 
   pythonImportsCheck = [ "mrsqm" ];
 

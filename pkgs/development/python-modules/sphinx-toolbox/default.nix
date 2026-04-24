@@ -32,13 +32,12 @@ buildPythonPackage (finalAttrs: {
     hash = "sha256-wwpPhsTCnpetsOuTN9NfUJPLlqRPScr/z31bxYqIt4E=";
   };
 
-  postPatch = ''
-    substituteInPlace \
-      requirements.txt PKG-INFO pyproject.toml \
-      --replace-fail "sphinx-tabs<3.4.7,>=1.2.1" "sphinx-tabs<=3.4.7,>=1.2.1"
-  '';
-
   build-system = [ whey ];
+
+  pythonRelaxDeps = [
+    "ruamel-yaml"
+    "sphinx-tabs"
+  ];
 
   dependencies = [
     sphinx

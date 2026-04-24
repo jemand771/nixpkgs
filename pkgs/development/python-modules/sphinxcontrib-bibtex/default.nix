@@ -48,6 +48,11 @@ buildPythonPackage rec {
     sphinx-autoapi
   ];
 
+  disabledTestPaths = [
+    # HTML output assertions fail due to docutils rendering changes
+    "test/test_debug.py"
+  ];
+
   pythonImportsCheck = [ "sphinxcontrib.bibtex" ];
 
   pythonNamespaces = [ "sphinxcontrib" ];

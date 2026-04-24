@@ -26,7 +26,10 @@ buildPythonPackage rec {
     hash = "sha256-ia4ixtui7F8NauytXYi2aaiKXejIOHNijQrSm2RtzdU=";
   };
 
-  pythonRelaxDeps = [ "hishel" ];
+  pythonRelaxDeps = [
+    "hishel"
+    "uv-build"
+  ];
 
   build-system = [ uv-build ];
 

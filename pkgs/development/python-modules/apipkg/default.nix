@@ -28,6 +28,8 @@ buildPythonPackage rec {
 
   enabledTestPaths = [ "test_apipkg.py" ];
 
+  pytestFlagsArray = [ "-W" "ignore::pytest.PytestRemovedIn9Warning" ];
+
   pythonImportsCheck = [ "apipkg" ];
 
   meta = {

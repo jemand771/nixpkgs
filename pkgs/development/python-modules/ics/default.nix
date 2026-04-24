@@ -47,6 +47,8 @@ buildPythonPackage rec {
     "test_many_lines"
     # AssertionError: 'Europe/Berlin' not found in "tzfile('Atlantic/Jan_Mayen')"
     "test_timezone_not_dropped"
+    # RecursionError: maximum recursion depth exceeded
+    "test_gehol"
   ];
 
   pythonImportsCheck = [ "ics" ];

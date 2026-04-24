@@ -38,7 +38,10 @@ buildPythonPackage rec {
   env.CLIPPER_PATH = clipper.out;
 
   postPatch = ''
-    sed -i 's#''${Python3_SITEARCH}#${placeholder "out"}/${python.sitePackages}#' cmake/SIPMacros.cmake
+    # SIPMacros.cmake was removed in newer versions
+    if [ -f cmake/SIPMacros.cmake ]; then
+      sed -i 's#''${Python3_SITEARCH}#${placeholder "out"}/${python.sitePackages}#' cmake/SIPMacros.cmake
+    fi
   '';
 
   meta = {

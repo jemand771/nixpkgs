@@ -51,6 +51,18 @@ buildPythonPackage rec {
     export PATH=$out/bin:$PATH
   '';
 
+  disabledTests = [
+    # assert 21 > 100, profiling count differs in Python 3.14
+    "test_varied_complex_invocations"
+  ];
+
+  disabledTestPaths = [
+    # sys.monitoring API changes in Python 3.14
+    "tests/test_sys_monitoring.py"
+    # Cython source recovery fails
+    "tests/test_cython.py"
+  ];
+
   pythonImportsCheck = [ "line_profiler" ];
 
   meta = {

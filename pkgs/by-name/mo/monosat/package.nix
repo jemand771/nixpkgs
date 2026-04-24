@@ -126,7 +126,11 @@ let
           ''
             substituteInPlace setup.py \
               --replace-fail 'library_dir = "../../../../"' 'library_dir = "${core}/lib/"'
-          '';
+          ''
+        # Cython 3.x removed 'long' as a builtin; replace isinstance(..., (int, long)) with int
+        + ''
+          sed -i 's/isinstance(\([^)]*\), (int, long))/isinstance(\1, int)/g' monosat/monosat_p.pyx
+        '';
 
       nativeCheckInputs = [ pytestCheckHook ];
 

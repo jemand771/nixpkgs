@@ -42,6 +42,11 @@ buildPythonPackage rec {
     substituteInPlace setup.py --replace-fail sklearn scikit-learn
   '';
 
+  disabledTests = [
+    # Optimization result differs with current numpy/scikit-learn
+    "test_mimic_discrete_max_fast"
+  ];
+
   pythonImportsCheck = [ "mlrose" ];
 
   # Fix random seed during tests

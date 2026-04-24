@@ -27,6 +27,8 @@ buildPythonPackage rec {
   postPatch = ''
     substituteInPlace setup.py \
       --replace-fail "version.get_git_version()" '"${version}"'
+    # conftest.py uses a deprecated pytest-mypy API that no longer works
+    echo "" > conftest.py
   '';
 
   build-system = [ setuptools ];
@@ -42,22 +44,18 @@ buildPythonPackage rec {
     cryptography
   ];
 
-  disabledTests = [
-    # ImportError: To use NTLM authentication you need to install ntlm-auth module
-    # ntlm-auth has been removed from nixpkgs
-    "test_ntlm"
+  disabledTestPaths = [
+    # All connected tests require a live MSSQL database
+    "tests/connected_test.py"
+    "tests/fedauth_test.py"
+    "tests/sqlalchemy_test.py"
+    "tests/transaction_test.py"
+    "tests/types_test.py"
+  ];
 
-    # TypeError: CertificateBuilder.add_extension() got an unexpected keyword argument 'extension'
-    # Tests are broken for pyOpenSSL>=23.0.0
-    # https://github.com/denisenkom/pytds/blob/1.13.0/test_requirements.txt
-    "test_with_simple_server_req_encryption"
-    "test_both_server_and_client_encryption_on"
-    "test_server_has_enc_on_but_client_is_off"
-    "test_only_login_encrypted"
-    "test_server_encryption_not_supported"
-    "test_server_with_bad_name_in_cert"
-    "test_cert_with_san"
-    "test_encrypted_socket"
+  disabledTests = [
+    # ImportError: ntlm-auth has been removed from nixpkgs
+    "test_ntlm"
   ];
 
   pythonImportsCheck = [ "pytds" ];

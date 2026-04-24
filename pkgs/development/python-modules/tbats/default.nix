@@ -24,6 +24,10 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [ setuptools ];
 
+  postPatch = ''
+    find tbats -name "*.py" -exec sed -i 's/force_all_finite/ensure_all_finite/g' {} +
+  '';
+
   propagatedBuildInputs = [
     numpy
     pmdarima

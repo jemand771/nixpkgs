@@ -28,7 +28,6 @@ buildPythonPackage rec {
   pythonImportsCheck = [ "braintree" ];
 
   enabledTestPaths = [
-    "tests/"
     "tests/fixtures"
     "tests/unit"
     "tests/integration/test_credentials_parser.py"

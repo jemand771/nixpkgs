@@ -46,6 +46,9 @@ buildPythonPackage rec {
   disabledTests = [
     #ValueError: Invalid modulus
     "test_modulus_verification"
+    # bcrypt 4.x enforces 72-byte password limit; SRP test vectors exceed it
+    "TestCTSRPClass"
+    "TestPYSRPClass"
   ];
 
   pythonImportsCheck = [ "proton" ];

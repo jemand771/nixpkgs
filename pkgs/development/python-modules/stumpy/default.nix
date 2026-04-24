@@ -49,6 +49,12 @@ buildPythonPackage rec {
     pytestCheckHook
   ];
 
+  disabledTests = [
+    # numpy ValueError: setting an array element with a sequence
+    "test_merge_topk_PI_without_overlap"
+    "test_merge_topk_ρI_without_overlap"
+  ];
+
   pythonImportsCheck = [ "stumpy" ];
 
   enabledTestPaths = [

@@ -38,6 +38,12 @@ buildPythonPackage rec {
     marshmallow
     colander
   ];
+
+  disabledTestPaths = [
+    # marshmallow 4.x removed the 'missing' keyword argument from Field.__init__()
+    "tests/test_validation.py"
+  ];
+
   pythonImportsCheck = [ "cornice" ];
 
   meta = {
