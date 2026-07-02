@@ -34,8 +34,6 @@ buildPythonPackage rec {
   '';
 
   nativeBuildInputs = [
-    pbr
-    setuptools_80
     versionCheckHook
   ];
 
@@ -52,6 +50,8 @@ buildPythonPackage rec {
     prettytable
     idna
     packageurl-python
+    pbr
+    setuptools_80
   ];
 
   pythonImportsCheck = [ "tern" ];
