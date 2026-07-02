@@ -14,6 +14,7 @@
   pyyaml,
   regex,
   requests,
+  setuptools_80,
   stevedore,
   versionCheckHook,
 }:
@@ -34,6 +35,7 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [
     pbr
+    setuptools_80
     versionCheckHook
   ];
 
