@@ -15,6 +15,7 @@
   regex,
   requests,
   stevedore,
+  versionCheckHook,
 }:
 
 buildPythonPackage rec {
@@ -31,7 +32,10 @@ buildPythonPackage rec {
     cp requirements.{in,txt}
   '';
 
-  nativeBuildInputs = [ pbr ];
+  nativeBuildInputs = [
+    pbr
+    versionCheckHook
+  ];
 
   propagatedBuildInputs = [
     pyyaml
@@ -47,9 +51,6 @@ buildPythonPackage rec {
     idna
     packageurl-python
   ];
-
-  # No tests
-  doCheck = false;
 
   pythonImportsCheck = [ "tern" ];
 
