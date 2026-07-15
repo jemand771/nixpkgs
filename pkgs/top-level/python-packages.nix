@@ -13665,11 +13665,6 @@ self: super: with self; {
 
   protobuf3-to-dict = callPackage ../development/python-modules/protobuf3-to-dict { };
 
-  # Protobuf 4.x
-  protobuf4 = callPackage ../development/python-modules/protobuf/4.nix {
-    protobuf = pkgs.protobuf_25;
-  };
-
   # Protobuf 5.x
   protobuf5 = callPackage ../development/python-modules/protobuf/5.nix {
     protobuf = pkgs.__splicedPackages.protobuf_29;
@@ -20021,7 +20016,7 @@ self: super: with self; {
             '';
           })).override
             { protobuf = protobufTF; };
-        protobuf-pythonTF = self.protobuf4.override { protobuf = protobufTF; };
+        protobuf-pythonTF = self.protobuf.override { protobuf = protobufTF; };
         grpcioTF = self.grpcio.override { protobuf = protobufTF; };
         tensorboardTF = self.tensorboard.override {
           grpcio = grpcioTF;

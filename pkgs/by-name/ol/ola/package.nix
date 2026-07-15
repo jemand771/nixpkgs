@@ -54,7 +54,7 @@ stdenv.mkDerivation (finalAttrs: {
     python3
   ];
   propagatedBuildInputs = [
-    (python3.pkgs.protobuf4.override { protobuf = protobuf_21; })
+    (python3.pkgs.protobuf.override { protobuf = protobuf_21; })
     python3.pkgs.numpy
   ];
 
